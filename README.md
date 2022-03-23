@@ -4,7 +4,9 @@ Discord Bot for the Fellas
 ## Dependencies
 
 sudo apt install ffmpeg
+
 pip3 install -U discord.py
+
 pip3 install -U dotenv
 
 
