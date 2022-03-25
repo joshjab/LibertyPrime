@@ -98,7 +98,7 @@ async def addsfx(ctx):
         file_type = files[0].filename.split('.')[1]
 
         if file_type == 'mp3' or file_type == '.wav' or file_type == '.m4a':
-            await files[0].save(files[0].filename)
+            await files[0].save('sfx/' + files[0].filename)
             await ctx.send("Added `" + files[0].filename + "` to avaialble SFX.")
 
         else:
