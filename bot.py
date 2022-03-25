@@ -65,7 +65,7 @@ async def sfx(ctx, sound : str):
 
 def search_sfx(sound_str : str):
     """
-    Returns a valid sound, reports when a sound does not work
+        Returns a valid sound, reports when a sound does not work
     """
 
     f = glob.glob(os.path.join(sfx_dir, sound_str + "*"))
@@ -84,39 +84,65 @@ def search_sfx(sound_str : str):
     if len(f) < 1:
         return ""
 
+# Add SFX
+@bot.command(name='addsfx')
+async def addsfx(ctx):
+    """
+        Uploads media file to sfx/
+    """
+    #NOTE: This is kind of incredibly insecure, there needs to be better file verification
+    #Check that file has a valid .mp3 or .wav extension
+    files = ctx.message.attachments
+    if len(files) > 0:
+
+        file_type = files[0].filename.split('.')[1]
+
+        if file_type == 'mp3' or file_type == '.wav' or file_type == '.m4a':
+            await files[0].save(files[0].filename)
+            await ctx.send("Added `" + files[0].filename + "` to avaialble SFX.")
+
+        else:
+            await ctx.send("Invalid file type detected.")
+    else:
+        await ctx.send("No file detected.") 
+
+# List SFX
+@bot.command(name='getsfx')
+async def getsfx(ctx):
+    
+    #Loop through and DM pages
+    for message in get_sfx_list():
+        await ctx.author.send(message)
+
 def get_sfx_list():
     """
-    Returns string of sound effects
+        Returns string of sound effects
     """
     messages = []
     messages.append("")
     message_index = 0
+
+    #Searches file system for things under sfx/
     fx = glob.glob("sfx/*")
     messages[0]+="List of Available Sound Effects:\n\n"
+
+    #Sorts by alpahabetical order
     fx = sorted(fx, key=str.lower)
+
     for sound in fx:
 
+        #DM Length is limited to 2000 characters
         if(len(messages[message_index]) >= 1900):
             message_index+=1
             messages.append("==========\n")
             messages[message_index]+= ("Page " + str(message_index+1) + '\n')
             messages[message_index]+= ("==========\n\n")
 
+        #Print out sound name on correct page
         #The 4: here takes off the 'sfx/' from the sound name
         messages[message_index]+=('`'+ sound[4:] +'`\n')
 
     return messages
-
-#TODO : Add SFX
-@bot.command(name='addsfx')
-async def addsfx(ctx, sound : str):
-    await ctx.send("Functionality not yet added, citizen.")
-
-#TODO : List SFX
-@bot.command(name='getsfx')
-async def getsfx(ctx):
-    for message in get_sfx_list():
-        await ctx.author.send(message)
 
 #TODO: Add silly chat bot
 ## Ask Prime
