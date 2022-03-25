@@ -33,14 +33,14 @@ async def on_ready():
 ## Help
 
 ## SFX
-@bot.command(name='lsfx')
+@bot.command(name='sfx')
 async def sfx(ctx, sound : str):
 
     # Grab the user who sent the command
     user = ctx.message.author
-    voice_channel = user.voice.channel
     #Only play if the user is in a voice channel
-    if voice_channel != None:
+    if user.voice_channel != None:
+        voice_channel = user.voice.channel
         #Find a sound effect that closely matches
         found_sfx = search_sfx(sound)
 
@@ -49,7 +49,7 @@ async def sfx(ctx, sound : str):
             try:
                 vc = await voice_channel.connect()
             except:
-                await ctx.send("SFX already plaing")
+                await ctx.send("SFX already playing")
                 return
             response = 'Playing `' + found_sfx.split('/')[1] +'`'
             await ctx.send(response)
@@ -84,14 +84,44 @@ def search_sfx(sound_str : str):
     if len(f) < 1:
         return ""
 
+def get_sfx_list():
+    """
+    Returns string of sound effects
+    """
+    messages = []
+    messages.append("")
+    message_index = 0
+    fx = glob.glob("sfx/*")
+    messages[0]+="List of Available Sound Effects:\n\n"
+    fx = sorted(fx, key=str.lower)
+    for sound in fx:
+
+        if(len(messages[message_index]) >= 1900):
+            message_index+=1
+            messages.append("==========\n")
+            messages[message_index]+= ("Page " + str(message_index+1) + '\n')
+            messages[message_index]+= ("==========\n\n")
+
+        #The 4: here takes off the 'sfx/' from the sound name
+        messages[message_index]+=('`'+ sound[4:] +'`\n')
+
+    return messages
+
 #TODO : Add SFX
+@bot.command(name='addsfx')
+async def addsfx(ctx, sound : str):
+    await ctx.send("Functionality not yet added, citizen.")
 
 #TODO : List SFX
+@bot.command(name='getsfx')
+async def getsfx(ctx):
+    for message in get_sfx_list():
+        await ctx.author.send(message)
 
 #TODO: Add silly chat bot
 ## Ask Prime
 @bot.command(name='ask')
 async def ask(ctx):
-    await bot.say("Functionality not yet added, citizen.")
+    await ctx.send("Functionality not yet added, citizen.")
 
 bot.run(TOKEN)
