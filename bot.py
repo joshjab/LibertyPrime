@@ -39,7 +39,7 @@ async def sfx(ctx, sound : str):
     # Grab the user who sent the command
     user = ctx.message.author
     #Only play if the user is in a voice channel
-    if user.voice_channel != None:
+    if user.voice.channel != None:
         voice_channel = user.voice.channel
         #Find a sound effect that closely matches
         found_sfx = search_sfx(sound)
